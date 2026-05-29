@@ -1,0 +1,2 @@
+"    }\n\n    // Calculate distance and relevance score for all candidates, filter by radius, and sort\n    let scoredPlaces = certifiedPlaces.map((place) => {\n      const distanceKm = parseFloat((Math.sqrt(Math.pow(place.lat - schoolLat, 2) + Math.pow(pl
+<truncated 3344 bytes>

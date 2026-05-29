@@ -1,0 +1,2 @@
+"// Helper to check if Supabase env is mocked\nfunction isSupabaseMocked() {\n  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;\n  return !url || url.includes(\"your_supabase\");\n}\n\n/**\n * 주제(subject) / 단원(unit) / 지역(region) 조합으로\
+<truncated 6347 bytes>

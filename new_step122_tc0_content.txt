@@ -1,0 +1,2 @@
+"// 교과 주제/단원과 장소 유형을 조합하여 교육적 연계 설명 동적 생성\nfunction getCustomMatchReason(placeName: string, grade: string, subject: string, unit: string): string {\n  const isPlantUnit = unit.includes(\"식물\") || un
+<truncated 9648 bytes>

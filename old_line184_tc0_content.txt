@@ -1,0 +1,2 @@
+"function getRelevanceScore(placeName: string, subject: string, unit: string): number {\n  const normSubject = subject.toLowerCase();\n  const normUnit = unit.toLowerCase();\n  \n  let score = 0;\n  \n  // 1. 국립세종수목원 및 수목원 계열 (식
+<truncated 3643 bytes>
