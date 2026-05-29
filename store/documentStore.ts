@@ -140,6 +140,7 @@ export const useDocumentStore = create<DocumentState>()(
     {
       name:    'trip-doc-documents',
       storage: createJSONStorage(() => sessionStorage),
+      skipHydration: true,
     }
   )
 );

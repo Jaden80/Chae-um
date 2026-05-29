@@ -127,6 +127,7 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name:    'trip-doc-settings',
       storage: createJSONStorage(() => localStorage),
+      skipHydration: true,
     }
   )
 );

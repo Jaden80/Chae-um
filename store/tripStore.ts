@@ -129,6 +129,7 @@ export const useTripStore = create<TripState>()(
     {
       name:    'trip-doc-trip',
       storage: createJSONStorage(() => sessionStorage),
+      skipHydration: true,
     }
   )
 );

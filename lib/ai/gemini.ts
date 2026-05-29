@@ -67,3 +67,22 @@ export async function generatePlaceDescription(
     return "";
   }
 }
+
+export async function generateText(systemPrompt: string, userPrompt: string): Promise<string> {
+  if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("your_gemini")) {
+    return "";
+  }
+  try {
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const result = await model.generateContent({
+      contents: [
+        { role: "user", parts: [{ text: `${systemPrompt}\n\n[USER INPUT]\n${userPrompt}` }] }
+      ],
+    });
+    return result.response.text().trim();
+  } catch (error) {
+    console.error("Gemini generateText error:", error);
+    throw error;
+  }
+}

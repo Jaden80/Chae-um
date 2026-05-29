@@ -101,6 +101,7 @@ export const useSchoolStore = create<SchoolState>()(
     {
       name:    'trip-doc-school',
       storage: createJSONStorage(() => localStorage),
+      skipHydration: true,
       partialize: (state) => ({
         selectedSchool: state.selectedSchool,
         classes:        state.classes,

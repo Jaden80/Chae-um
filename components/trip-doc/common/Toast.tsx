@@ -50,6 +50,7 @@ function ToastItemComponent({ item, onRemove }: { item: ToastItem; onRemove: (id
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [mounted, setMounted] = useState(false);
   const remove = useCallback((id: string) => setToasts((p) => p.filter((t) => t.id !== id)), []);
   const show   = useCallback((message: string, type: ToastType = 'info', duration = 4000) => {
     const id = `toast-${Date.now()}-${Math.random()}`;
@@ -62,10 +63,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     warning: (m) => show(m, 'warning'),
     info:    (m) => show(m, 'info'),
   };
+
+  useEffect(() => { setMounted(true); }, []);
+
   return (
     <ToastContext.Provider value={value}>
       {children}
-      {createPortal(
+      {mounted && createPortal(
         <div className="fixed bottom-5 right-5 z-[60] flex flex-col gap-2 items-end" aria-label="알림">
           {toasts.map((t) => <ToastItemComponent key={t.id} item={t} onRemove={remove} />)}
         </div>,

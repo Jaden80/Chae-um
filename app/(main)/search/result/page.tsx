@@ -1,9 +1,10 @@
 "use client";
+export const dynamic = 'force-dynamic';
 
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 
-const ResultContent = dynamic(() => import("./ResultContent"), {
+const ResultContent = nextDynamic(() => import("./ResultContent"), {
   ssr: false,
   loading: () => (
     <div className="flex flex-col items-center justify-center h-[80vh] space-y-6">
