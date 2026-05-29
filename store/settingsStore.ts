@@ -111,9 +111,8 @@ export const useSettingsStore = create<SettingsState>()(
         })),
 
       isAllRequiredApiReady: () => {
-        const neisKey = get().getRawKey('neis');
-        const geminiKey = get().getRawKey('gemini');
-        return !!neisKey && !!geminiKey;
+        // Backend reads process.env directly now, so client UI doesn't need to block
+        return true;
       },
 
       getMaskedKey: (provider) => {
