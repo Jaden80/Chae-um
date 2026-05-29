@@ -9,9 +9,6 @@ async function kakaoFetch<T>(endpoint: string, params: Record<string, string>): 
   const headers: Record<string, string> = {};
   if (KAKAO_MAP_API_KEY) {
     headers["Authorization"] = `KakaoAK ${KAKAO_MAP_API_KEY}`;
-    headers["Origin"] = "http://localhost:3000";
-    headers["Referer"] = "http://localhost:3000/";
-    headers["KA"] = "sdk/1.0.0 os/javascript lang/ko-KR device/web origin/http%3A%2F%2Flocalhost%3A3000";
   }
 
   const res = await fetch(url.toString(), {
