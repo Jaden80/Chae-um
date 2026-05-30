@@ -400,7 +400,7 @@ ${assignmentTeachers}
 (총괄 → 담임 → 교감 → 교장 보고 체계)`;
 
     case 'p11_studentList': {
-      let studentTableStr = `| 반 | 번호 | 성명 | 성별 | 특이사항 | 비상연락처 | 비고 |\n|---|---|---|---|---|---|---|\n(개인정보 보호를 위해 실제 이름 대신 번호와 OOO 처리)\n1 ~ ${participants}번까지 행 생성`;
+      let studentTableStr = `| 반 | 번호 | 성명 | 성별 | 특이사항 | 비상연락처 | 비고 |\n|---|---|---|---|---|---|---|\n1 ~ ${participants}번까지 행 생성`;
       let nonParticipantTableStr = `| 반 | 번호 | 성명 | 사유 | 학교 내 관리자 |\n|---|---|---|---|---|`;
       let specialNeedsTableStr = `| 반 | 번호 | 성명 | 특이사항 | 지참약 | 담당교사 |\n|---|---|---|---|---|---|\n(알레르기, 천식, 당뇨 등 주의 학생 관리)`;
 
@@ -410,15 +410,15 @@ ${assignmentTeachers}
         const snStudents = students.filter(s => s.hasSpecialNeeds || s.allergyInfo);
 
         if (pStudents.length > 0) {
-          studentTableStr = `| 반 | 번호 | 성명 | 성별 | 특이사항 | 비상연락처 | 비고 |\n|---|---|---|---|---|---|---|\n` + pStudents.map(s => `| ${s.className} | ${s.number} | ${s.name ? s.name.charAt(0) : 'O'}OO | ${s.gender === 'M' ? '남' : '여'} | ${(s.hasSpecialNeeds ? (s.specialNeedsDetail || '요양호') : '')} ${(s.allergyInfo ? (s.allergyInfo) : '')} | ${s.parentPhone || ''} | ${s.needsSubsidy ? '지원대상' : ''} |`).join('\n');
+          studentTableStr = `| 반 | 번호 | 성명 | 성별 | 특이사항 | 비상연락처 | 비고 |\n|---|---|---|---|---|---|---|\n` + pStudents.map(s => `| ${s.className} | ${s.number} | ${s.name || ''} | ${s.gender === 'M' ? '남' : '여'} | ${(s.hasSpecialNeeds ? (s.specialNeedsDetail || '요양호') : '')} ${(s.allergyInfo ? (s.allergyInfo) : '')} | ${s.parentPhone || ''} | ${s.needsSubsidy ? '지원대상' : ''} |`).join('\n');
         }
         if (npStudents.length > 0) {
-          nonParticipantTableStr = `| 반 | 번호 | 성명 | 사유 | 학교 내 관리자 |\n|---|---|---|---|---|\n` + npStudents.map(s => `| ${s.className} | ${s.number} | ${s.name ? s.name.charAt(0) : 'O'}OO | ${s.nonParticipateReason || ''} | 담임교사 |`).join('\n');
+          nonParticipantTableStr = `| 반 | 번호 | 성명 | 사유 | 학교 내 관리자 |\n|---|---|---|---|---|\n` + npStudents.map(s => `| ${s.className} | ${s.number} | ${s.name || ''} | ${s.nonParticipateReason || ''} | 담임교사 |`).join('\n');
         } else {
           nonParticipantTableStr = `미참가 학생 없음`;
         }
         if (snStudents.length > 0) {
-          specialNeedsTableStr = `| 반 | 번호 | 성명 | 특이사항 | 지참약 | 담당교사 |\n|---|---|---|---|---|---|\n` + snStudents.map(s => `| ${s.className} | ${s.number} | ${s.name ? s.name.charAt(0) : 'O'}OO | ${(s.specialNeedsDetail || '')} ${(s.allergyInfo || '')} | 확인필요 | 담임교사 |`).join('\n');
+          specialNeedsTableStr = `| 반 | 번호 | 성명 | 특이사항 | 지참약 | 담당교사 |\n|---|---|---|---|---|---|\n` + snStudents.map(s => `| ${s.className} | ${s.number} | ${s.name || ''} | ${(s.specialNeedsDetail || '')} ${(s.allergyInfo || '')} | 확인필요 | 담임교사 |`).join('\n');
         } else {
           specialNeedsTableStr = `요양호 학생 없음`;
         }
