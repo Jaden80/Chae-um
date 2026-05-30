@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useRouter } from 'next/navigation';
 import { useDocumentStore, DOCUMENT_META_LIST } from '@/store/documentStore';
 import { useTripStore } from '@/store/tripStore';
@@ -124,9 +126,13 @@ export default function S08_Preview() {
                         </div>
                       ) : (
                         <div className="group relative">
-                          <p className="text-sm text-neutral-700 whitespace-pre-wrap leading-relaxed">{section.body}</p>
+                          <div className="prose prose-sm max-w-none text-neutral-700 leading-relaxed">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                              {section.body}
+                            </ReactMarkdown>
+                          </div>
                           <button onClick={() => setEditingSection({ docId: activeDoc.id, idx, value: section.body })}
-                            className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-blue-600 bg-white border border-blue-200 px-2 py-0.5 rounded">
+                            className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-blue-600 bg-white border border-blue-200 px-2 py-0.5 rounded shadow-sm">
                             수정
                           </button>
                         </div>
