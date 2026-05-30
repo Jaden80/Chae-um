@@ -41,7 +41,17 @@ export function getDocumentSpecificPrompt(documentId: string, ctx: Record<string
     assignmentTeachers += `| 선두 인솔 | OOO 교사 | 1-15번 | 이동 선두, 안전 확인 |\n| 후미 인솔 | OOO 교사 | 16번-끝 | 낙오자 방지, 후미 점검 |\n| 보건 담당 | OOO 교사 | 전체 | 응급처치, 건강 관리 |`;
   }
 
-  const common = `[기본 정보]\n학교명: ${schoolName}, 학년반: ${gradeClass}, 담임: ${teacherName}, 장소: ${placeName}(${placeAddr}), 일시: ${tripDate} ${departureTime}~${returnTime}, 참가: ${participants}명, 교통: ${transportLabel}\n\n[체험학습 목적 및 참고 프롬프트]\n${tripPurpose || '교과 연계 현장 체험'}\n* 위 목적과 참고 내용을 문맥에 맞게 문서(계획서, 안내문 등)에 적극 반영하여 생성하세요.\n\n⚠️ 공통 규칙: 모든 문서에서 표를 작성할 때는 반드시 마크다운(Markdown) 표 형식을 사용하세요.`;
+  const common = `[기본 정보]
+학교명: ${schoolName}, 학년반: ${gradeClass}, 담임: ${teacherName}, 장소: ${placeName}(${placeAddr}), 일시: ${tripDate} ${departureTime}~${returnTime}, 참가: ${participants}명, 교통: ${transportLabel}
+
+[체험학습 목적 및 참고 프롬프트]
+${tripPurpose || '교과 연계 현장 체험'}
+* 위 목적과 참고 내용을 문맥에 맞게 문서(계획서, 안내문 등)에 적극 반영하여 생성하세요.
+
+⚠️ 공통 규칙 (매우 중요):
+1. 모든 문서에서 표를 작성할 때는 반드시 마크다운(Markdown) 표 형식을 사용하세요.
+2. 문장을 작성할 때는 길게 서술하지 말고, 반드시 '개조식'(~함, ~임, 명사형 종결 등)으로 간결하게 요약하여 작성하세요.
+3. 내용에 '가.', '나.', '다.', '라.', '1.', '2.' 등의 구분 기호가 포함될 경우, 반드시 줄바꿈(Enter)을 수행하여 각각 새로운 행에서 문장을 시작하세요.`;
 
   switch (documentId) {
 
