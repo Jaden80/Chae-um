@@ -17,6 +17,8 @@ async function kakaoFetch<T>(endpoint: string, params: Record<string, string>): 
   });
 
   if (!res.ok) {
+    const errorText = await res.text();
+    console.error(`Kakao API Error [${res.status}]:`, errorText);
     throw new Error(`Kakao Maps API error: ${res.statusText}`);
   }
 

@@ -800,6 +800,8 @@ export async function POST(req: NextRequest) {
       const relevantScored = scoredPlaces.filter(p => p.relevanceScore > 0);
       if (relevantScored.length > 0) {
         filteredPlaces = [...relevantScored].sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 10);
+      } else {
+        filteredPlaces = [...scoredPlaces].sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 5);
       }
     }
 
@@ -827,6 +829,13 @@ export async function POST(req: NextRequest) {
 
     // 최종적으로 상위 10개 선정
     certifiedPlaces = filteredPlaces.slice(0, 10);
+
+    if (certifiedPlaces.length === 0) {
+      return NextResponse.json({ 
+        success: false, 
+        error: "체험처를 찾지 못했습니다. 카카오 API 연동(REST API 키) 또는 검색 반경 설정을 확인해주세요." 
+      });
+    }
 
     // 5. prompts/recommend.md 시스템 프롬프트 로드
     const promptPath = path.join(process.cwd(), "prompts", "recommend.md");

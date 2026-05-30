@@ -98,7 +98,7 @@ export default function ResultPage() {
         const data = await res.json();
         if (data.success) {
           if (!data.recommendations || data.recommendations.length === 0) {
-            throw new Error("체험처를 찾지 못했습니다. Netlify 환경 변수에 KAKAO_MAP_API_KEY가 올바르게 설정되어 있는지 확인해 주세요.");
+            throw new Error("조건에 맞는 체험처를 찾지 못했습니다. 검색 반경을 넓히거나 다른 조건으로 시도해 주세요.");
           }
           setLearningObjectives(data.learningObjectives);
           setSchoolCoord(data.schoolCoord);
