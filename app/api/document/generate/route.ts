@@ -9,7 +9,7 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { documentId, tripPlan, schoolSnapshot, staffInfo, placeInfo, weatherInfo, routeInfo, safetyPickContext, students } = body;
+    const { documentId, tripPlan, schoolSnapshot, staffInfo, placeInfo, placesInfo, weatherInfo, routeInfo, safetyPickContext, students } = body;
 
     if (!documentId) {
       return NextResponse.json({ error: "documentId is required" }, { status: 400 });
@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
     // 컨텍스트 추출
     const school = schoolSnapshot || {};
     const place  = placeInfo  || {};
+    const places = placesInfo || [];
     const plan   = tripPlan   || {};
     const spCtx  = safetyPickContext || {};
 
@@ -44,9 +45,17 @@ export async function POST(req: NextRequest) {
     const grade         = spCtx.grade         || plan.grade       || "○";
     const className     = school.className    || plan.className   || "○";
     const teacherName   = school.teachers?.[0]?.name || plan.teacherName || "담임교사";
-    const placeName     = place.name  || plan.placeName  || "○○체험관";
-    const placeAddr     = place.address || plan.placeAddress || "";
     const tripType      = plan.type ?? "day";
+    
+    let finalPlaceName = place.name || plan.placeName || "○○체험관";
+    let finalPlaceAddr = place.address || plan.placeAddress || "";
+
+    if (tripType === 'tour' && places.length > 0) {
+      const region = places[0].address ? places[0].address.split(' ').slice(0, 2).join(' ') : '해당 지역';
+      finalPlaceName = `${region} 일대 (${places.map((p: any) => p.name).join(", ")} 등)`;
+      finalPlaceAddr = "세부 일정표 참조";
+    }
+
     const totalStudents = plan.totalStudents ?? 30;
     const nonParticipants = plan.nonParticipants ?? 0;
     const teacherCount  = school.teachers?.length ?? plan.teacherCount ?? 3;
@@ -70,7 +79,7 @@ export async function POST(req: NextRequest) {
     const transportLabel = transportMap[plan.transportType ?? "bus"] ?? plan.transportType ?? "전세버스";
 
     const ctx = {
-      schoolName, grade, className, teacherName, placeName, placeAddr,
+      schoolName, grade, className, teacherName, placeName: finalPlaceName, placeAddr: finalPlaceAddr,
       tripDate, tripEndDate, totalStudents, nonParticipants, teacherCount,
       departureTime, returnTime, transportLabel, budget, totalBudget,
       tripTitle, tripPurpose, tripType, students, staffInfo,

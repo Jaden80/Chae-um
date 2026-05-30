@@ -14,7 +14,7 @@ export default function S07_DocumentGenerate() {
   const abortRef = useRef(false);
   const { documents, setDocumentStatus, setDocumentContent, setGeneratingId,
     getDoneCount, addTokenUsage, totalTokenUsed } = useDocumentStore();
-  const { tripType, plan, place, route, weather, completeStep, setCurrentStep } = useTripStore();
+  const { tripType, plan, place, places, route, weather, completeStep, setCurrentStep } = useTripStore();
   const { buildSnapshot, principal, vPrincipal, admin, teachers: staffTeachers } = useSchoolStore();
   const { summary: studentSummary, students } = useStudentStore();
   const [isRunning,  setIsRunning]  = useState(false);
@@ -86,6 +86,7 @@ export default function S07_DocumentGenerate() {
             schoolSnapshot:   snapshot,
             staffInfo:        { principal, vPrincipal, admin, teachers: staffTeachers },
             placeInfo:        place,
+            placesInfo:       places,
             weatherInfo:      weather.length > 0 ? { forecast: weather.slice(0, 8) } : undefined,
             routeInfo:        route,
             safetyPickContext, // 안전-Pick 학교명·날짜 전달

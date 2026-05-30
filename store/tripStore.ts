@@ -18,7 +18,8 @@ interface TripState {
   tripType:  TripType | null;
   tripScale: TripScale | null;
   plan:      Partial<TripPlan>;
-  place:     TripPlace | null;
+  place:     TripPlace | null; // Primary place (or first place)
+  places:    TripPlace[]; // Array of places for multi-place trips
   appAPayload: AppAPayload | null;
   route:     RouteInfo | null;
   weather:   WeatherInfo[];
@@ -31,6 +32,8 @@ interface TripState {
   selectTripType:     (type: TripType, scale: TripScale) => void;
   updatePlan:         (updates: Partial<TripPlan>) => void;
   setPlace:           (place: TripPlace) => void;
+  addPlace:           (place: TripPlace) => void;
+  removePlace:        (placeId: string) => void;
   parseAppAPayload:   (params: URLSearchParams) => AppAPayload | null;
   setRoute:           (route: RouteInfo) => void;
   setWeather:         (weather: WeatherInfo[]) => void;
@@ -54,7 +57,7 @@ const TRIP_SCALE_LABELS: Record<TripScale, string> = {
 };
 
 const initialState = {
-  tripType: null, tripScale: null, plan: {}, place: null,
+  tripType: null, tripScale: null, plan: {}, place: null, places: [],
   appAPayload: null, route: null, weather: [],
   isCollectingRoute: false, isCollectingWeather: false,
   collectError: null, currentStep: 1, completedSteps: [] as number[],
@@ -73,7 +76,18 @@ export const useTripStore = create<TripState>()(
         set((state) => ({ plan: { ...state.plan, ...updates,
                                   updatedAt: new Date().toISOString() } })),
 
-      setPlace: (place) => set({ place }),
+      setPlace: (place) => set({ place, places: [place] }),
+      addPlace: (place) => set((state) => ({ 
+        places: [...state.places, place],
+        place: state.place ? state.place : place // Set first place as primary if not set
+      })),
+      removePlace: (placeId) => set((state) => {
+        const newPlaces = state.places.filter(p => p.placeId !== placeId);
+        return {
+          places: newPlaces,
+          place: state.place?.placeId === placeId ? (newPlaces.length > 0 ? newPlaces[0] : null) : state.place
+        };
+      }),
 
       parseAppAPayload: (params) => {
         const placeId   = params.get('placeId');

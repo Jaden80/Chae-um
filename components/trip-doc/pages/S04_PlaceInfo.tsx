@@ -12,7 +12,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 export default function S04_PlaceInfo() {
   const router = useRouter();
   const toast    = useToast();
-  const { place, setPlace, completeStep, setCurrentStep } = useTripStore();
+  const { tripType, place, places, setPlace, addPlace, removePlace, completeStep, setCurrentStep } = useTripStore();
   const { settings } = useSettingsStore();
   const [keyword, setKeyword] = useState('');
   const [results, setResults] = useState<TripPlace[]>([]);
@@ -48,13 +48,21 @@ export default function S04_PlaceInfo() {
       longitude: 127.0,
       sourceApp: 'manual' as const,
     };
-    setPlace(manual);
-    toast.success(`"${manual.name}" 장소로 설정되었습니다.`);
+    if (tripType === 'tour') {
+      addPlace(manual);
+      toast.success(`"${manual.name}" 장소가 추가되었습니다.`);
+    } else {
+      setPlace(manual);
+      toast.success(`"${manual.name}" 장소로 설정되었습니다.`);
+    }
     setManualMode(false);
   };
 
   const handleNext = () => {
-    if (!place) { toast.warning('장소를 선택하거나 직접 입력하세요.'); return; }
+    if (tripType === 'tour' ? places.length === 0 : !place) { 
+      toast.warning('장소를 선택하거나 직접 입력하세요.'); 
+      return; 
+    }
     completeStep(4);
     completeStep(5);
     setCurrentStep(6);
@@ -66,7 +74,9 @@ export default function S04_PlaceInfo() {
       <div className="mb-6">
         <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">STEP 3 / 7</span>
         <h1 className="text-xl font-bold text-neutral-900 mt-2">장소 정보</h1>
-        <p className="text-sm text-neutral-500 mt-1">체험학습 장소를 선택합니다.</p>
+        <p className="text-sm text-neutral-500 mt-1">
+          {tripType === 'tour' ? '수학여행 코스에 포함될 여러 장소를 선택하세요.' : '체험학습 장소를 선택합니다.'}
+        </p>
       </div>
 
       {/* 카카오 장소 검색 */}
@@ -89,14 +99,27 @@ export default function S04_PlaceInfo() {
             {results.map((p) => (
               <li key={p.placeId}>
                 <button
-                  onClick={() => { setPlace(p); toast.success(`${p.name} 선택됨`); }}
+                  onClick={() => { 
+                    if (tripType === 'tour') {
+                      if (places.some(existing => existing.placeId === p.placeId)) {
+                        removePlace(p.placeId);
+                        toast.success(`${p.name} 취소됨`);
+                      } else {
+                        addPlace(p);
+                        toast.success(`${p.name} 추가됨`);
+                      }
+                    } else {
+                      setPlace(p); 
+                      toast.success(`${p.name} 선택됨`); 
+                    }
+                  }}
                   className={`w-full text-left px-3 py-2.5 rounded-md hover:bg-neutral-50 transition-colors ${
-                    place?.placeId === p.placeId ? 'bg-blue-50 border border-blue-200' : ''
+                    (tripType === 'tour' ? places.some(existing => existing.placeId === p.placeId) : place?.placeId === p.placeId) ? 'bg-blue-50 border border-blue-200' : ''
                   }`}
                 >
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">{p.name}</p>
-                    {place?.placeId === p.placeId && <Badge variant="primary" size="sm">선택됨</Badge>}
+                    {(tripType === 'tour' ? places.some(existing => existing.placeId === p.placeId) : place?.placeId === p.placeId) && <Badge variant="primary" size="sm">선택됨</Badge>}
                   </div>
                   <p className="text-xs text-neutral-500">{p.address}</p>
                   <p className="text-xs text-neutral-400">{p.category}</p>
@@ -135,24 +158,46 @@ export default function S04_PlaceInfo() {
       </div>
 
       {/* 선택된 장소 표시 */}
-      {place && (
-        <div className="card mb-4 border-blue-200 bg-blue-50/30">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold text-blue-600 mb-1">선택된 장소</p>
-              <p className="text-sm font-bold">{place.name}</p>
-              <p className="text-xs text-neutral-500">{place.address}</p>
+      {tripType === 'tour' ? (
+        places.length > 0 && (
+          <div className="mb-4">
+            <p className="text-xs font-semibold text-neutral-500 mb-2">선택된 장소 ({places.length}개)</p>
+            <div className="flex flex-col gap-2">
+              {places.map((p) => (
+                <div key={p.placeId} className="card border-blue-200 bg-blue-50/30 flex items-start justify-between py-2 px-3">
+                  <div>
+                    <p className="text-sm font-bold">{p.name}</p>
+                    <p className="text-xs text-neutral-500">{p.address}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="info">{p.sourceApp === 'manual' ? '직접 입력' : '카카오 검색'}</Badge>
+                    <button onClick={() => removePlace(p.placeId)} className="text-xs text-red-500 hover:underline">삭제</button>
+                  </div>
+                </div>
+              ))}
             </div>
-            <Badge variant="info">{place.sourceApp === 'manual' ? '직접 입력' : '카카오 검색'}</Badge>
           </div>
-        </div>
+        )
+      ) : (
+        place && (
+          <div className="card mb-4 border-blue-200 bg-blue-50/30">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-semibold text-blue-600 mb-1">선택된 장소</p>
+                <p className="text-sm font-bold">{place.name}</p>
+                <p className="text-xs text-neutral-500">{place.address}</p>
+              </div>
+              <Badge variant="info">{place.sourceApp === 'manual' ? '직접 입력' : '카카오 검색'}</Badge>
+            </div>
+          </div>
+        )
       )}
 
       <div className="flex justify-between">
         <Button variant="secondary" onClick={() => router.push('/doc-wizard/step/excel')}>이전</Button>
         <Button
           onClick={handleNext}
-          disabled={!place}
+          disabled={tripType === 'tour' ? places.length === 0 : !place}
           iconRight={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
         >
           다음 단계
