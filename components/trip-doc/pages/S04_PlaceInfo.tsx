@@ -23,7 +23,6 @@ export default function S04_PlaceInfo() {
 
   const handleKakaoSearch = async () => {
     if (!keyword.trim()) { toast.warning('장소명을 입력하세요.'); return; }
-    if (!settings.kakao.key) { toast.warning('카카오 API Key가 없습니다. 직접 입력을 이용하세요.'); return; }
     setSearching(true);
     try {
       const res = await searchKakaoPlaces({ keyword: keyword.trim() });
