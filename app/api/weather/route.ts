@@ -254,7 +254,7 @@ export async function GET(req: NextRequest) {
       );
       weatherUrl.searchParams.set("serviceKey", DATA_GO_KR_API_KEY);
       weatherUrl.searchParams.set("dataType", "JSON");
-      weatherUrl.searchParams.set("numOfRows", "300");
+      weatherUrl.searchParams.set("numOfRows", "1500");
       weatherUrl.searchParams.set("pageNo", "1");
       weatherUrl.searchParams.set("base_date", todayStr);
       weatherUrl.searchParams.set("base_time", "0500");
