@@ -71,10 +71,7 @@ export default function TeacherProfileButton() {
 
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    router.push("/login");
-  };
+
 
   const handleOpen = () => {
     setDraft({ ...profile });
@@ -149,13 +146,7 @@ export default function TeacherProfileButton() {
         <Edit3 className="w-3 h-3 text-slate-400 group-hover:text-blue-400" />
       </button>
 
-      <button
-        onClick={handleLogout}
-        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-500 hover:text-red-500 transition-colors hover:bg-red-50 rounded-lg"
-      >
-        <LogOut className="w-4 h-4" />
-        로그아웃
-      </button>
+
 
       {/* Edit Modal */}
       {open && (
