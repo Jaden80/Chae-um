@@ -13,7 +13,7 @@ export function getDocumentSpecificPrompt(documentId: string, ctx: Record<string
   const gradeClass = `${grade}학년 ${className}반`;
   const participants = totalStudents - (nonParticipants || 0);
 
-  const common = `[기본 정보]\n학교명: ${schoolName}, 학년반: ${gradeClass}, 담임: ${teacherName}, 장소: ${placeName}(${placeAddr}), 일시: ${tripDate} ${departureTime}~${returnTime}, 참가: ${participants}명, 교통: ${transportLabel}\n\n⚠️ 공통 규칙: 모든 문서에서 표를 작성할 때는 반드시 마크다운(Markdown) 표 형식을 사용하세요.`;
+  const common = `[기본 정보]\n학교명: ${schoolName}, 학년반: ${gradeClass}, 담임: ${teacherName}, 장소: ${placeName}(${placeAddr}), 일시: ${tripDate} ${departureTime}~${returnTime}, 참가: ${participants}명, 교통: ${transportLabel}\n\n[체험학습 목적 및 참고 프롬프트]\n${tripPurpose || '교과 연계 현장 체험'}\n* 위 목적과 참고 내용을 문맥에 맞게 문서(계획서, 안내문 등)에 적극 반영하여 생성하세요.\n\n⚠️ 공통 규칙: 모든 문서에서 표를 작성할 때는 반드시 마크다운(Markdown) 표 형식을 사용하세요.`;
 
   switch (documentId) {
 

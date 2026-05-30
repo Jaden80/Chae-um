@@ -82,11 +82,12 @@ export default function S06_ManualInput() {
       <div className="card mb-4 space-y-4">
         <h3 className="font-semibold text-sm">기본 정보</h3>
         <Input label="체험학습 제목" value={form.title} onChange={(e) => set('title', e.target.value)}
+          className="w-full"
           placeholder="예: 2026학년도 현장체험학습" />
         <div>
           <label className="text-sm font-medium text-neutral-700 block mb-1">목적</label>
           <textarea value={form.purpose} onChange={(e) => set('purpose', e.target.value)}
-            rows={3} className="input-base resize-none" placeholder="체험학습 목적 및 기대 효과를 입력하세요." />
+            rows={3} className="input-base resize-none w-full" placeholder="체험학습 목적 및 기대 효과를 입력하세요." />
         </div>
       </div>
 
