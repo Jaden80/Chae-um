@@ -285,8 +285,8 @@ export default function WeatherSection({ tripDate, placeLat, placeLng, placeName
             <div className="text-xs font-semibold text-amber-800 leading-relaxed">
               <strong>중기예보 ({weather.daysUntil}일 후)</strong> — 체험일까지{" "}
               <strong>{weather.daysUntil}일</strong>이 남아 중기예보를 제공합니다.
-              중기예보는 <strong>단기예보(3일 이내)보다 정확도가 낮을 수 있습니다.</strong>
-              체험 3일 전부터 이 페이지를 다시 방문하시면 더욱 정확한 단기예보와
+              중기예보는 <strong>단기예보(2일 이내)보다 정확도가 낮을 수 있습니다.</strong>
+              체험 2일 전부터 이 페이지를 다시 방문하시면 더욱 정확한 단기예보와
               교사 대응 매뉴얼을 확인하실 수 있습니다.
             </div>
           </div>
@@ -347,7 +347,7 @@ export default function WeatherSection({ tripDate, placeLat, placeLng, placeName
           <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-2xl px-4 py-3">
             <CalendarDays className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
             <p className="text-xs font-semibold text-blue-800 leading-relaxed">
-              📅 <strong>체험 3일 전</strong>에 이 페이지를 다시 방문하시면, 기상청 단기예보 기반의
+              📅 <strong>체험 2일 전</strong>에 이 페이지를 다시 방문하시면, 기상청 단기예보 기반의
               더욱 정확한 날씨 정보와 <strong>맞춤형 교사 대응 매뉴얼</strong>이 자동으로 제공됩니다.
             </p>
           </div>
@@ -362,7 +362,7 @@ export default function WeatherSection({ tripDate, placeLat, placeLng, placeName
             <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
             <div className="text-xs font-semibold text-emerald-800 leading-relaxed">
               <strong>단기예보 ({weather.daysUntil === 0 ? "오늘" : `${weather.daysUntil}일 후`})</strong>{" "}
-              — 기상청 단기예보는 3일 이내 가장 정확한 예보입니다.
+              — 기상청 단기예보는 2일 이내 가장 정확한 예보입니다.
               아래 날씨 정보를 바탕으로 교사 대응 매뉴얼을 확인하고 체험학습을 준비하세요.
             </div>
           </div>

@@ -99,7 +99,7 @@ export const downloadStaffTemplate = (): void => {
   ]);
   ws['!cols'] = [{ wch:10 },{ wch:12 },{ wch:6 },{ wch:6 },{ wch:15 },{ wch:20 }];
   XLSX.utils.book_append_sheet(wb, ws, '교직원정보');
-  XLSX.writeFile(wb, 'Template_A_교직원정보.xlsx');
+  XLSX.writeFile(wb, '교직원정보.xlsx');
 };
 
 export const downloadStudentTemplate = (): void => {
@@ -110,7 +110,7 @@ export const downloadStudentTemplate = (): void => {
     ['1','1','2','이수아','여','010-3333-4444','','','O','천식','',''],
   ]);
   XLSX.utils.book_append_sheet(wb, ws, '학생명단');
-  XLSX.writeFile(wb, 'Template_B_학생명단.xlsx');
+  XLSX.writeFile(wb, '학생명단.xlsx');
 };
 
 export const parseExcelFile = (file: File, type: ExcelTemplateType): Promise<ExcelUploadResult<StaffRow | StudentRow>> => {

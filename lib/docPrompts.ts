@@ -7,11 +7,39 @@ export function getDocumentSpecificPrompt(documentId: string, ctx: Record<string
     schoolName, grade, className, teacherName, placeName, placeAddr,
     tripDate, tripEndDate, totalStudents, nonParticipants, teacherCount,
     departureTime, returnTime, transportLabel, budget, totalBudget,
-    tripTitle, tripPurpose, tripType, students
+    tripTitle, tripPurpose, tripType, students, staffInfo
   } = ctx;
 
   const gradeClass = `${grade}학년 ${className}반`;
   const participants = totalStudents - (nonParticipants || 0);
+
+  const staff = staffInfo || {};
+  const teachersList = staff.teachers || [];
+  
+  let emergencyContactTeachers = `| 역할 | 성명 | 소속(학년반) | 휴대전화 |\n|---|---|---|---|\n`;
+  if (teachersList.length > 0) {
+    emergencyContactTeachers += teachersList.map((t: any) => `| ${t.role || t.position || '담임'} | ${t.name || 'OOO'} | ${schoolName} ${t.grade ? t.grade + '학년' : ''} ${t.classNm ? t.classNm + '반' : ''} | ${t.phone || '010-0000-0000'} |`).join('\n');
+  } else {
+    emergencyContactTeachers += `| 담임 | ${teacherName} | ${gradeClass} | 010-0000-0000 |\n| 부담임 | OOO | ${schoolName} | 010-0000-0000 |\n| 보건교사 | OOO | ${schoolName} | 010-0000-0000 |`;
+  }
+  
+  let schoolEmergencyContact = `| 구분 | 성명 | 직위 | 연락처 |\n|---|---|---|---|\n`;
+  if (staff.principal || staff.vPrincipal || staff.admin) {
+    if (staff.principal) schoolEmergencyContact += `| 교장 | ${staff.principal.name} | 교장 | ${staff.principal.phone || '042-000-0000'} |\n`;
+    if (staff.vPrincipal) schoolEmergencyContact += `| 교감 | ${staff.vPrincipal.name} | 교감 | ${staff.vPrincipal.phone || '042-000-0000'} |\n`;
+    if (staff.admin) schoolEmergencyContact += `| 행정실장 | ${staff.admin.name} | 행정실장 | ${staff.admin.phone || '042-000-0000'} |\n`;
+  } else {
+    schoolEmergencyContact += `| 교장 | OOO | 교장 | 042-000-0000 |\n| 교감 | OOO | 교감 | 042-000-0000 |\n| 행정실장 | OOO | 행정실장 | 042-000-0000 |`;
+  }
+
+  let assignmentTeachers = `| 역할 | 담당자 | 담당 학생/구역 | 주요 업무 |\n|---|---|---|---|\n| 총괄 인솔교사 | ${teacherName} | 전체 | 일정 총괄, 기관 협력, 비상상황 대응 |\n`;
+  if (teachersList.length > 1) {
+    teachersList.filter((t: any) => t.name !== teacherName).forEach((t: any) => {
+      assignmentTeachers += `| ${t.role || '인솔교사'} | ${t.name} | ${t.grade ? t.grade + '학년 ' : ''}${t.classNm ? t.classNm + '반' : '지정 구역'} | 학생 안전 지도, 사고 예방, 인원 파악 |\n`;
+    });
+  } else {
+    assignmentTeachers += `| 선두 인솔 | OOO 교사 | 1-15번 | 이동 선두, 안전 확인 |\n| 후미 인솔 | OOO 교사 | 16번-끝 | 낙오자 방지, 후미 점검 |\n| 보건 담당 | OOO 교사 | 전체 | 응급처치, 건강 관리 |`;
+  }
 
   const common = `[기본 정보]\n학교명: ${schoolName}, 학년반: ${gradeClass}, 담임: ${teacherName}, 장소: ${placeName}(${placeAddr}), 일시: ${tripDate} ${departureTime}~${returnTime}, 참가: ${participants}명, 교통: ${transportLabel}\n\n[체험학습 목적 및 참고 프롬프트]\n${tripPurpose || '교과 연계 현장 체험'}\n* 위 목적과 참고 내용을 문맥에 맞게 문서(계획서, 안내문 등)에 적극 반영하여 생성하세요.\n\n⚠️ 공통 규칙: 모든 문서에서 표를 작성할 때는 반드시 마크다운(Markdown) 표 형식을 사용하세요.`;
 
@@ -218,12 +246,10 @@ ${common}
 # ${schoolName} 현장체험학습 비상연락체계표
 
 ## 1. 인솔 교사 연락처
-| 역할 | 성명 | 소속(학년반) | 휴대전화 |
-(담임, 부담임, 보건교사, 인솔교사 등)
+${emergencyContactTeachers}
 
 ## 2. 학교 비상연락처
-| 구분 | 성명 | 직위 | 연락처 |
-(교장, 교감, 행정실장 등)
+${schoolEmergencyContact}
 
 ## 3. 체험처 연락처
 | 구분 | 기관명 | 담당자 | 연락처 |
@@ -352,11 +378,7 @@ ${common}
 총 인솔 교사: ${teacherCount}명 / 학생: ${participants}명 (교사 1인당 ${Math.ceil(participants / Math.max(teacherCount, 1))}명 담당)
 
 ## 2. 역할별 업무 분장
-| 역할 | 담당자 | 담당 학생/구역 | 주요 업무 |
-| 총괄 인솔교사 | ${teacherName} | 전체 | 일정 총괄, 기관 협력, 비상상황 대응 |
-| 선두 인솔 | ○○○ 교사 | 1-15번 | 이동 선두, 안전 확인 |
-| 후미 인솔 | ○○○ 교사 | 16번-끝 | 낙오자 방지, 후미 점검 |
-| 보건 담당 | ○○○ 교사 | 전체 | 응급처치, 건강 관리 |
+${assignmentTeachers}
 
 ## 3. 상황별 역할
 | 상황 | 담당자 | 조치 내용 |

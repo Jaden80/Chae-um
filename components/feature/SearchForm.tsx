@@ -23,7 +23,8 @@ export function SearchForm() {
   const [error, setError] = useState<string | null>(null);
   const [tripDate, setTripDate] = useState<string>("");
 
-  // 교사 프로필에서 학년 자동 세팅
+  const [schoolLevel, setSchoolLevel] = useState<string>("초");
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -35,8 +36,13 @@ export function SearchForm() {
             setGrade(gradeNum);
           }
         }
+        if (profile.schoolName) {
+          if (profile.schoolName.includes("중학") || profile.schoolName.includes("중학교")) setSchoolLevel("중");
+          else if (profile.schoolName.includes("고등") || profile.schoolName.match(/고등학교|고$/)) setSchoolLevel("고");
+          else if (profile.schoolName.includes("특수")) setSchoolLevel("특수 ");
+          else setSchoolLevel("초");
+        }
       }
-      // 저장된 희망일 복원
       const savedDate = localStorage.getItem(TRIP_DATE_KEY);
       if (savedDate) setTripDate(savedDate);
     } catch {}
@@ -49,12 +55,17 @@ export function SearchForm() {
           setGrade(gradeNum);
         }
       }
+      if (profile?.schoolName) {
+        if (profile.schoolName.includes("중학") || profile.schoolName.includes("중학교")) setSchoolLevel("중");
+        else if (profile.schoolName.includes("고등") || profile.schoolName.match(/고등학교|고$/)) setSchoolLevel("고");
+        else if (profile.schoolName.includes("특수")) setSchoolLevel("특수 ");
+        else setSchoolLevel("초");
+      }
     };
     window.addEventListener("teacherProfileChanged", handleProfileChange);
     return () => window.removeEventListener("teacherProfileChanged", handleProfileChange);
   }, []);
 
-  // 희망일 변경 시 localStorage에 저장
   const handleDateChange = (val: string) => {
     setTripDate(val);
     try {
@@ -63,9 +74,8 @@ export function SearchForm() {
     } catch {}
   };
 
-  const currentSchoolLevel = selectedSchool?.schulKndScNm || "";
-  const isMiddle = currentSchoolLevel.includes("중학");
-  const isHigh = currentSchoolLevel.includes("고등");
+  const isMiddle = schoolLevel === "중";
+  const isHigh = schoolLevel === "고";
 
   const chips = isHigh
     ? [
@@ -94,27 +104,7 @@ export function SearchForm() {
   };
 
   const getSchoolLevel = (): string => {
-    // 1순위: schoolStore의 selectedSchool.schulKndScNm (가장 신뢰도 높음)
-    if (selectedSchool?.schulKndScNm) {
-      const knd = selectedSchool.schulKndScNm;
-      if (knd.includes("초등")) return "초";
-      if (knd.includes("중학")) return "중";
-      if (knd.includes("고등")) return "고";
-      if (knd.includes("특수")) return "특수 ";
-    }
-    // 2순위: 교사 프로필의 schoolName
-    try {
-      const rawProfile = localStorage.getItem(STORAGE_KEY);
-      if (rawProfile) {
-        const profile = JSON.parse(rawProfile);
-        if (profile.schoolName) {
-          if (profile.schoolName.includes("중학")) return "중";
-          if (profile.schoolName.includes("고등")) return "고";
-          if (profile.schoolName.includes("특수")) return "특수 ";
-        }
-      }
-    } catch {}
-    return "초"; // 기본값
+    return schoolLevel;
   };
 
   const saveHistory = (eventId: string, unitValue: string, gradeValue: number) => {

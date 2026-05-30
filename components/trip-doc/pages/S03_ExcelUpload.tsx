@@ -101,7 +101,7 @@ export default function S03_ExcelUpload() {
       <div className="card mb-4">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="font-semibold">Template-A 교직원 정보</h3>
+            <h3 className="font-semibold">교직원 정보</h3>
             <p className="text-xs text-neutral-500">교장·교감·인솔교사 성명·연락처 (연초 1회 작성)</p>
           </div>
           <div className="flex items-center gap-2">
@@ -111,7 +111,7 @@ export default function S03_ExcelUpload() {
           </div>
         </div>
         <ExcelDropzone onFile={handleStaffFile} isLoading={staffLoading}
-          label="교직원 엑셀 파일을 드래그하거나 클릭하세요" sublabel="Template_A_교직원정보.xlsx" />
+          label="교직원 엑셀 파일을 드래그하거나 클릭하세요" sublabel="교직원정보.xlsx" />
         {staffErrors.length > 0 && (
           <div className="mt-3 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-600">
             {staffErrors.slice(0, 5).map((e, i) => <div key={i}>• {e}</div>)}
@@ -127,7 +127,7 @@ export default function S03_ExcelUpload() {
       <div className="card mb-6">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="font-semibold">Template-B 학생 정보</h3>
+            <h3 className="font-semibold">학생 정보</h3>
             <p className="text-xs text-neutral-500">학생 명단·보호자 연락처·요양호·경비지원 (행사별)</p>
           </div>
           <div className="flex items-center gap-2">
@@ -136,7 +136,7 @@ export default function S03_ExcelUpload() {
           </div>
         </div>
         <ExcelDropzone onFile={handleStudentFile} isLoading={studentLoading}
-          label="학생 명단 엑셀 파일을 드래그하거나 클릭하세요" sublabel="Template_B_학생명단.xlsx" />
+          label="학생 명단 엑셀 파일을 드래그하거나 클릭하세요" sublabel="학생명단.xlsx" />
         {studentErrors.length > 0 && (
           <div className="mt-3 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-600">
             {studentErrors.slice(0, 5).map((e, i) => <div key={i}>• {e}</div>)}

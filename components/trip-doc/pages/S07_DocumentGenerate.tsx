@@ -15,7 +15,7 @@ export default function S07_DocumentGenerate() {
   const { documents, setDocumentStatus, setDocumentContent, setGeneratingId,
     getDoneCount, addTokenUsage, totalTokenUsed } = useDocumentStore();
   const { tripType, plan, place, route, weather, completeStep, setCurrentStep } = useTripStore();
-  const { buildSnapshot } = useSchoolStore();
+  const { buildSnapshot, principal, vPrincipal, admin, teachers: staffTeachers } = useSchoolStore();
   const { summary: studentSummary, students } = useStudentStore();
   const [isRunning,  setIsRunning]  = useState(false);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -84,6 +84,7 @@ export default function S07_DocumentGenerate() {
             documentId:       meta.id,
             tripPlan:         enrichedPlan,
             schoolSnapshot:   snapshot,
+            staffInfo:        { principal, vPrincipal, admin, teachers: staffTeachers },
             placeInfo:        place,
             weatherInfo:      weather.length > 0 ? { forecast: weather.slice(0, 8) } : undefined,
             routeInfo:        route,

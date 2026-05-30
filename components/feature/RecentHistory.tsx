@@ -37,19 +37,10 @@ export default function RecentHistory() {
   }, []);
 
   const getSchoolLevelPrefix = () => {
-    // 1순위: schoolStore의 selectedSchool.schulKndScNm (가장 신뢰도 높음)
-    if (selectedSchool?.schulKndScNm) {
-      const knd = selectedSchool.schulKndScNm;
-      if (knd.includes("초등")) return "초";
-      if (knd.includes("중학")) return "중";
-      if (knd.includes("고등")) return "고";
-      if (knd.includes("특수")) return "특수 ";
-    }
-    // 2순위: 교사 프로필의 schoolName
     if (profileSchoolName) {
       if (profileSchoolName.includes("초등")) return "초";
-      if (profileSchoolName.includes("중학")) return "중";
-      if (profileSchoolName.includes("고등")) return "고";
+      if (profileSchoolName.includes("중학") || profileSchoolName.includes("중학교")) return "중";
+      if (profileSchoolName.includes("고등") || profileSchoolName.match(/고등학교|고$/)) return "고";
       if (profileSchoolName.includes("특수")) return "특수 ";
     }
     return "초"; // 기본값

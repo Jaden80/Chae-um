@@ -9,7 +9,7 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { documentId, tripPlan, schoolSnapshot, placeInfo, weatherInfo, routeInfo, safetyPickContext, students } = body;
+    const { documentId, tripPlan, schoolSnapshot, staffInfo, placeInfo, weatherInfo, routeInfo, safetyPickContext, students } = body;
 
     if (!documentId) {
       return NextResponse.json({ error: "documentId is required" }, { status: 400 });
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
       schoolName, grade, className, teacherName, placeName, placeAddr,
       tripDate, tripEndDate, totalStudents, nonParticipants, teacherCount,
       departureTime, returnTime, transportLabel, budget, totalBudget,
-      tripTitle, tripPurpose, tripType, students,
+      tripTitle, tripPurpose, tripType, students, staffInfo,
     };
 
     // 문서별 특화 프롬프트 생성
