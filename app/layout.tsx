@@ -3,8 +3,11 @@ import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "안전-Pick | 현장체험학습 AI 큐레이터",
+  title: "채움-AI 안전체험학습 도우미",
   description: "안전 인증 현장체험학습 AI 큐레이터",
+  icons: {
+    icon: '/new_logo.png',
+  },
 };
 
 export default function RootLayout({
