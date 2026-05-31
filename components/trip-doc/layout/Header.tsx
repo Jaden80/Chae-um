@@ -35,7 +35,7 @@ export default function Header() {
       <header className="sticky top-0 z-40 bg-white border-b border-neutral-200 h-14 flex items-center px-4 gap-4 shrink-0">
         <button onClick={() => router.push('/search')}
           className="flex items-center gap-2 shrink-0 hover:opacity-80 transition-opacity">
-          <img src="/chae_um_logo.png" alt="채움 로고" className="w-7 h-7 rounded-md object-cover" />
+          <img src="/new_logo.png" alt="채움 로고" className="w-7 h-7 rounded-md object-cover" />
           <span className="font-bold text-neutral-900 text-sm hidden sm:block">채움</span>
         </button>
 

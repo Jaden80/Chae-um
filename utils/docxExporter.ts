@@ -28,28 +28,30 @@ const makeBodyParagraphs = (text: string): Paragraph[] =>
   );
 
 const makeTable = (rows: string[][]): Table => {
-  const colCount = Math.max(...rows.map(r => r.length));
-  const cellWidth = 100 / (colCount || 1);
+  const colCount = Math.max(...rows.map(r => r.length), 1);
+  // A4 본문 폭 기준 (여백 제외) ≈ 9360 twip. 각 열에 균등 배분
+  const TABLE_WIDTH_DXA = 9360;
+  const cellWidthDxa = Math.floor(TABLE_WIDTH_DXA / colCount);
   return new Table({
-    width: { size: 100, type: WidthType.PERCENTAGE },
+    width: { size: TABLE_WIDTH_DXA, type: WidthType.DXA },
     rows: rows.map((cells, ri) =>
       new TableRow({
         tableHeader: ri === 0,
         children: cells.map((cell) =>
           new TableCell({
-            width: { size: cellWidth, type: WidthType.PERCENTAGE },
-            shading: ri === 0 ? { type: ShadingType.CLEAR, fill: 'EFF6FF' } : undefined,
-            margins: { top: 60, bottom: 60, left: 100, right: 100 },
+            width: { size: cellWidthDxa, type: WidthType.DXA },
+            shading: ri === 0 ? { type: ShadingType.CLEAR, fill: 'DBEAFE' } : { type: ShadingType.CLEAR, fill: 'FFFFFF' },
+            margins: { top: 80, bottom: 80, left: 120, right: 120 },
             borders: {
-              top:    { style: BorderStyle.SINGLE, size: 4, color: 'D1D5DB' },
-              bottom: { style: BorderStyle.SINGLE, size: 4, color: 'D1D5DB' },
-              left:   { style: BorderStyle.SINGLE, size: 4, color: 'D1D5DB' },
-              right:  { style: BorderStyle.SINGLE, size: 4, color: 'D1D5DB' },
+              top:    { style: BorderStyle.SINGLE, size: 4, color: 'CBD5E1' },
+              bottom: { style: BorderStyle.SINGLE, size: 4, color: 'CBD5E1' },
+              left:   { style: BorderStyle.SINGLE, size: 4, color: 'CBD5E1' },
+              right:  { style: BorderStyle.SINGLE, size: 4, color: 'CBD5E1' },
             },
             children: [new Paragraph({
               alignment: ri === 0 ? AlignmentType.CENTER : AlignmentType.LEFT,
               children: [new TextRun({ text: cell.replace(/\*\*/g, ''), font: FONT, size: 18,
-                bold: ri === 0 || cell.includes('**'), color: ri === 0 ? '2563EB' : '111827' })],
+                bold: ri === 0 || cell.includes('**'), color: ri === 0 ? '1D4ED8' : '111827' })],
             })],
           })
         ),
