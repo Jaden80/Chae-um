@@ -20,6 +20,11 @@ export default function S07_DocumentGenerate() {
   const [isRunning,  setIsRunning]  = useState(false);
   const [currentIdx, setCurrentIdx] = useState(0);
 
+  const [estimatedRemainingMs, setEstimatedRemainingMs] = useState<number | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const processedRef = useRef<number>(0);
+  const targetCountRef = useRef<number>(0);
+
   const applicableDocs = DOCUMENT_META_LIST.filter((m) => tripType && m.applicableTypes.includes(tripType));
   const [selectedDocs, setSelectedDocs] = useState<Set<DocumentId>>(() => new Set(applicableDocs.map(d => d.id)));
 
@@ -46,6 +51,10 @@ export default function S07_DocumentGenerate() {
   const handleGenerate = async () => {
     if (isRunning) return;
     abortRef.current = false; setIsRunning(true);
+    startTimeRef.current = Date.now();
+    processedRef.current = 0;
+    targetCountRef.current = applicableDocs.filter(m => selectedDocs.has(m.id) && documents[m.id]?.status !== 'done').length;
+    setEstimatedRemainingMs(targetCountRef.current * 8000);
     const snapshot = buildSnapshot();
     const enrichedPlan = {
       ...plan,
@@ -105,11 +114,12 @@ export default function S07_DocumentGenerate() {
         setDocumentContent(meta.id, result.content);
         addTokenUsage(result.tokenUsage?.totalTokens ?? 0);
 
-        // Gemini 오류 발생 시 경고 표시 (Mock 문서로 대체됨)
         if (result.geminiError) {
           console.warn(`[S07] Gemini 실패 (${meta.id}):`, result.geminiError);
           toast.warning(`${meta.title}: AI 생성 실패, 기본 양식 사용 — ${result.geminiError.substring(0, 60)}`);
         }
+
+        processedRef.current += 1;
 
         if (i < applicableDocs.length - 1) await new Promise((r) => setTimeout(r, 600));
       } catch (err) {
@@ -129,6 +139,37 @@ export default function S07_DocumentGenerate() {
     if (s === 'error')     return <span className="text-red-500 text-sm">✕</span>;
     if (s === 'skipped')   return <span className="text-neutral-300 text-sm">—</span>;
     return <span className="text-neutral-300 text-sm">○</span>;
+  };
+
+  React.useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isRunning) {
+      timer = setInterval(() => {
+        const elapsed = Date.now() - startTimeRef.current;
+        const processed = processedRef.current;
+        const remainingDocs = targetCountRef.current - processed;
+        
+        if (remainingDocs <= 0) {
+          setEstimatedRemainingMs(0);
+        } else if (processed === 0) {
+          setEstimatedRemainingMs(remainingDocs * 8000 - elapsed);
+        } else {
+          const avg = elapsed / processed;
+          setEstimatedRemainingMs(remainingDocs * avg);
+        }
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isRunning]);
+
+  const formatTime = (ms: number | null) => {
+    if (ms === null) return '';
+    if (ms <= 0) return '곧 완료됩니다';
+    const s = Math.ceil(ms / 1000);
+    const m = Math.floor(s / 60);
+    const remS = s % 60;
+    if (m > 0) return `약 ${m}분 ${remS}초`;
+    return `약 ${s}초`;
   };
 
   return (
@@ -151,8 +192,28 @@ export default function S07_DocumentGenerate() {
           <div className="h-full bg-blue-600 rounded-full transition-all duration-500"
             style={{ width: `${progress}%` }} role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} />
         </div>
-        {isRunning && <p className="text-xs text-neutral-500 mt-2">생성 중: {applicableDocs[currentIdx]?.title ?? '...'}</p>}
       </div>
+
+      {isRunning && (
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm animate-fade-in">
+          <div className="flex items-center gap-3 text-blue-800">
+            <svg className="w-6 h-6 animate-spin text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <div>
+              <p className="font-semibold text-sm">서류 생성 중입니다...</p>
+              <p className="text-xs text-blue-600/80 mt-0.5">{applicableDocs[currentIdx]?.title ?? '...'}</p>
+            </div>
+          </div>
+          {estimatedRemainingMs !== null && (
+            <div className="bg-white/60 px-3 py-1.5 rounded-md border border-blue-100 shrink-0">
+              <span className="text-xs text-neutral-500 block mb-0.5">예상 남은 시간</span>
+              <span className="text-sm font-bold text-blue-700">{formatTime(estimatedRemainingMs)}</span>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="card mb-6">
         <div className="flex justify-between items-center mb-3">

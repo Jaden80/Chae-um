@@ -23,18 +23,21 @@ const makeBodyParagraphs = (text: string): Paragraph[] =>
   text.split('\n').map((line) =>
     new Paragraph({
       spacing: { after: 80 },
-      children: [new TextRun({ text: line, font: FONT, size: 20, color: '111827' })],
+      children: [new TextRun({ text: line.replace(/\*\*/g, ''), font: FONT, size: 20, color: '111827', bold: line.includes('**') })],
     })
   );
 
-const makeTable = (rows: string[][]): Table =>
-  new Table({
+const makeTable = (rows: string[][]): Table => {
+  const colCount = Math.max(...rows.map(r => r.length));
+  const cellWidth = 100 / (colCount || 1);
+  return new Table({
     width: { size: 100, type: WidthType.PERCENTAGE },
     rows: rows.map((cells, ri) =>
       new TableRow({
         tableHeader: ri === 0,
         children: cells.map((cell) =>
           new TableCell({
+            width: { size: cellWidth, type: WidthType.PERCENTAGE },
             shading: ri === 0 ? { type: ShadingType.CLEAR, fill: 'EFF6FF' } : undefined,
             margins: { top: 60, bottom: 60, left: 100, right: 100 },
             borders: {
@@ -45,14 +48,15 @@ const makeTable = (rows: string[][]): Table =>
             },
             children: [new Paragraph({
               alignment: ri === 0 ? AlignmentType.CENTER : AlignmentType.LEFT,
-              children: [new TextRun({ text: cell, font: FONT, size: 18,
-                bold: ri === 0, color: ri === 0 ? '2563EB' : '111827' })],
+              children: [new TextRun({ text: cell.replace(/\*\*/g, ''), font: FONT, size: 18,
+                bold: ri === 0 || cell.includes('**'), color: ri === 0 ? '2563EB' : '111827' })],
             })],
           })
         ),
       })
     ),
   });
+};
 
 const emptyLine = () => new Paragraph({ spacing: { after: 80 }, children: [] });
 

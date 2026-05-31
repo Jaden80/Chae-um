@@ -73,7 +73,9 @@ const buildPdf = async (tripDoc: TripDocument, schoolName: string): Promise<Uint
             page.drawRectangle({ x: ML, y: y - 14, width: CW, height: 18, color: ri === 0 ? C.bg : C.white });
             row.forEach((cell, ci) => {
               page.drawRectangle({ x: ML + ci * colW, y: y - 14, width: colW, height: 18, borderColor: C.border, borderWidth: 0.5 });
-              page.drawText(cell.substring(0, 15), { x: ML + ci * colW + 4, y: y - 9, size: 8, font: ri === 0 ? bold : reg, color: ri === 0 ? C.primary : C.text });
+              const cleanCell = cell.replace(/\*\*/g, '');
+              const isCellBold = ri === 0 || cell.includes('**');
+              page.drawText(cleanCell.substring(0, 15), { x: ML + ci * colW + 4, y: y - 9, size: 8, font: isCellBold ? bold : reg, color: ri === 0 ? C.primary : C.text });
             });
             y -= 18;
           }
@@ -92,7 +94,9 @@ const buildPdf = async (tripDoc: TripDocument, schoolName: string): Promise<Uint
         } else {
           flushTable();
           ensureSpace(14);
-          if (line.trim()) page.drawText(line.substring(0, 90), { x: ML, y, size: 9, font: reg, color: C.text });
+          const cleanLine = line.trim().replace(/\*\*/g, '');
+          const isBold = line.includes('**');
+          if (cleanLine) page.drawText(cleanLine.substring(0, 90), { x: ML, y, size: 9, font: isBold ? bold : reg, color: C.text });
           y -= 13;
         }
       }
