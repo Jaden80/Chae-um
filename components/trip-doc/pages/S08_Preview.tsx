@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 import { useRouter } from 'next/navigation';
 import { useDocumentStore, DOCUMENT_META_LIST } from '@/store/documentStore';
 import { useTripStore } from '@/store/tripStore';
@@ -127,7 +128,7 @@ export default function S08_Preview() {
                       ) : (
                         <div className="group relative">
                           <div className="prose prose-sm max-w-none text-neutral-700 leading-relaxed">
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
                               {section.body}
                             </ReactMarkdown>
                           </div>
