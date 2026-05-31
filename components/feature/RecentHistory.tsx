@@ -66,7 +66,7 @@ export default function RecentHistory() {
       {filteredItems.map((item, idx) => (
         <Link
           key={item.eventId + idx}
-          href={`/search/result?eventId=${item.eventId}&grade=${item.grade}&subject=%EA%B8%B0%ED%83%80&unit=${encodeURIComponent(item.unit)}`}
+          href={`/search/result?eventId=${item.eventId}&schoolLevel=${encodeURIComponent(item.schoolLevel || defaultLevelPrefix)}&grade=${item.grade}&subject=%EA%B8%B0%ED%83%80&unit=${encodeURIComponent(item.unit)}`}
           className="flex flex-col md:flex-row md:items-center justify-between p-5 bg-white border border-slate-200 rounded-2xl hover:border-blue-400 hover:shadow-md transition-all group gap-4 active:scale-[0.99]"
         >
           <div className="space-y-2">

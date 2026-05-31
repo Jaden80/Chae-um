@@ -139,7 +139,7 @@ export function SearchForm() {
       if (result.success && result.eventId) {
         saveHistory(result.eventId, unit, grade);
         router.push(
-          `/search/result?eventId=${result.eventId}&grade=${grade}&subject=%EA%B8%B0%ED%83%80&unit=${encodeURIComponent(unit)}&radius=${radius}`
+          `/search/result?eventId=${result.eventId}&schoolLevel=${encodeURIComponent(schoolLevel)}&grade=${grade}&subject=%EA%B8%B0%ED%83%80&unit=${encodeURIComponent(unit)}&radius=${radius}`
         );
       } else {
         setError(result.error || "추천을 시작하지 못했습니다.");

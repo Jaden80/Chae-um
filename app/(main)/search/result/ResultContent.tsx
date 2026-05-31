@@ -35,6 +35,9 @@ export default function ResultPage() {
   const subject = searchParams.get("subject") || "사회";
   const unit = searchParams.get("unit") || "우리 고장의 모습";
   const initialRadius = Number(searchParams.get("radius") || "30");
+  const rawSchoolLevel = searchParams.get("schoolLevel") || "초";
+  
+  const displaySchoolLevel = rawSchoolLevel === "초" ? "초등" : rawSchoolLevel === "중" ? "중학교" : rawSchoolLevel === "고" ? "고등학교" : rawSchoolLevel;
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -294,7 +297,7 @@ export default function ResultPage() {
             <h2 className="text-lg font-black text-slate-800 flex items-center gap-1.5">
               💡 AI 교육과정 설계 및 추천
             </h2>
-            <Badge className="bg-blue-50 text-blue-700 border-blue-200 font-bold">초등 {grade}학년 {subject}</Badge>
+            <Badge className="bg-blue-50 text-blue-700 border-blue-200 font-bold">{displaySchoolLevel} {grade}학년 {subject}</Badge>
           </div>
           <p className="text-sm text-slate-600 leading-relaxed font-semibold bg-slate-50 border border-slate-150 p-4 rounded-2xl">
             {learningObjectives}
