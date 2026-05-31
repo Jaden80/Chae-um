@@ -58,13 +58,45 @@ const buildPdf = async (tripDoc: TripDocument, schoolName: string): Promise<Uint
         y -= 18;
       }
       y -= 8;
-    } else if (section.body) {
+    }
+
+    if (section.body) {
       const lines = section.body.split('\n');
+      let tableRows: string[][] = [];
+
+      const flushTable = () => {
+        if (tableRows.length > 0) {
+          for (let ri = 0; ri < tableRows.length; ri++) {
+            ensureSpace(20);
+            const row  = tableRows[ri];
+            const colW = CW / row.length;
+            page.drawRectangle({ x: ML, y: y - 14, width: CW, height: 18, color: ri === 0 ? C.bg : C.white });
+            row.forEach((cell, ci) => {
+              page.drawRectangle({ x: ML + ci * colW, y: y - 14, width: colW, height: 18, borderColor: C.border, borderWidth: 0.5 });
+              page.drawText(cell.substring(0, 15), { x: ML + ci * colW + 4, y: y - 9, size: 8, font: ri === 0 ? bold : reg, color: ri === 0 ? C.primary : C.text });
+            });
+            y -= 18;
+          }
+          y -= 8;
+          tableRows = [];
+        }
+      };
+
       for (const line of lines) {
-        ensureSpace(14);
-        if (line.trim()) page.drawText(line.substring(0, 90), { x: ML, y, size: 9, font: reg, color: C.text });
-        y -= 13;
+        const trimmed = line.trim();
+        if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+          if (trimmed.replace(/[|:\-\s]/g, '').length === 0) {
+            continue; // separator line
+          }
+          tableRows.push(trimmed.split('|').slice(1, -1).map(c => c.trim()));
+        } else {
+          flushTable();
+          ensureSpace(14);
+          if (line.trim()) page.drawText(line.substring(0, 90), { x: ML, y, size: 9, font: reg, color: C.text });
+          y -= 13;
+        }
       }
+      flushTable();
       y -= 4;
     }
   }

@@ -63,10 +63,46 @@ const buildChildren = (doc: TripDocument): (Paragraph | Table)[] => {
   children.push(makeTitleParagraph(content.title || doc.meta.title), emptyLine());
   content.sections.forEach((section) => {
     if (section.heading) children.push(makeHeadingParagraph(section.heading));
+
     if (section.tableData && section.tableData.length > 0) {
       children.push(makeTable(section.tableData), emptyLine());
-    } else if (section.body) {
-      children.push(...makeBodyParagraphs(section.body), emptyLine());
+    }
+
+    if (section.body) {
+      const lines = section.body.split('\n');
+      let tableRows: string[][] = [];
+      let textBuffer: string[] = [];
+
+      const flushText = () => {
+        if (textBuffer.length > 0) {
+          children.push(...makeBodyParagraphs(textBuffer.join('\n')));
+          textBuffer = [];
+        }
+      };
+
+      const flushTable = () => {
+        if (tableRows.length > 0) {
+          children.push(makeTable(tableRows), emptyLine());
+          tableRows = [];
+        }
+      };
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+          flushText();
+          if (trimmed.replace(/[|:\-\s]/g, '').length === 0) {
+            continue; // separator line
+          }
+          tableRows.push(trimmed.split('|').slice(1, -1).map(c => c.trim()));
+        } else {
+          flushTable();
+          textBuffer.push(line);
+        }
+      }
+      flushText();
+      flushTable();
+      children.push(emptyLine());
     }
   });
   return children;
